@@ -16,7 +16,7 @@
           <li class="nav-dashboard"><a href="{{ URLFor "dashboard" }}">My Dashboard</a></li>
         {{ end }}
         <li class="nav-home"><a href="{{ URLFor "home" }}">Home</a></li>
-        <!--<li class="nav-about"><a href="{{ URLFor "about" }}">About</a></li>-->
+        <li class="nav-about"><a href="{{ URLFor "about" }}">About</a></li>
         <li class="nav-contact"><a href="{{ URLFor "contact" }}">Contact</a></li>
         <li>
         {{ if not .Universals.Session.Values.userEmail }}
