@@ -1,0 +1,29 @@
+{{ define "sidebar" }}
+<div class="col-sm-2 col-md-2 sidebar">
+  <ul class="nav nav-sidebar">
+    {{ if .Universals.Session.Values.workId }}
+    <li class="nav-breadcrumb"><a href="{{ URLFor "work_view" }}{{ .Universals.Session.Values.workId }}">Back to {{ .Universals.Session.Values.workTitle }}</a>
+    <hr />
+    </li>
+    {{ end }}
+    <li class="nav-dashboard"><a href="{{ URLFor "dashboard" }}">Works</a></li>
+    <!--<li class="nav-work_index"><a href="{{ URLFor "dashboard" }}">Works</a></li>-->
+    <li class="nav-character_index"><a href="{{ URLFor "character_index" }}">Characters</a></li>
+    <li class="nav-setting_index"><a href="{{ URLFor "setting_index" }}">Settings</a></li>
+  </ul>
+  <!--
+  <ul class="nav nav-sidebar">
+    <li><a href="">Nav item</a></li>
+    <li><a href="">Nav item again</a></li>
+    <li><a href="">One more nav</a></li>
+    <li><a href="">Another nav item</a></li>
+    <li><a href="">More navigation</a></li>
+  </ul>
+  <ul class="nav nav-sidebar">
+    <li><a href="">Nav item again</a></li>
+    <li><a href="">One more nav</a></li>
+    <li><a href="">Another nav item</a></li>
+  </ul>
+  -->
+</div>
+{{ end }}

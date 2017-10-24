@@ -1,0 +1,66 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{ define "jumbotron" }}
+    <div class="jumbotron">
+      <h1>{{ .Section.Title }}</h1>
+      {{ if .Section.Snippet }}<p>(snippet)</p>{{ end }}
+      <p>
+          <a href="{{ URLFor "section_edit" }}{{ .Section.Id }}"><span class="glyphicon glyphicon-pencil"></span>&nbsp;edit</a>
+      </p>
+      <p>
+          {{ AsHTML .Section.Blurb }}
+      </p>
+    </div>
+{{ end }}
+
+{{ define "body" }}
+<div class="row">
+    <div class="col-md-7">
+        <div class="panel panel-primary">
+          <div class="view-body">
+            {{ AsHTML .Section.Body }}
+          </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="row">
+
+        <div class="panel panel-info">
+          <div class="panel-heading"><h3>Characters</h3>
+          <br /><small><a class="panel-heading-link" href="{{ URLFor "character_new" }}?workId={{ .Section.WorkId }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new character</a></small>
+          </div>
+          <ul class="list-group">
+              {{ range .CharactersList }}
+              <li class="list-group-item">
+                  <a href="{{ URLFor "character_view" }}{{ .Id }}">{{ .Name }}</a>
+                  <p>
+                      {{ AsHTML .Blurb }}
+                  </p>
+              </li>
+              {{ end }}
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="panel panel-success">
+          <div class="panel-heading"><h3>Settings</h3>
+          <br /><small><a class="panel-heading-link" href="{{ URLFor "setting_new" }}?workId={{ .Section.WorkId }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new setting</a></small>
+          </div>
+          <ul class="list-group">
+              {{ range .SettingsList }}
+              <li class="list-group-item">
+                  <a href="{{ URLFor "setting_view" }}{{ .Id }}">{{ .Name }}</a>
+                  <p>
+                      {{ AsHTML .Blurb }}
+                  </p>
+              </li>
+              {{ end }}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+</div>
+{{ end }}

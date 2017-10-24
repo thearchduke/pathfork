@@ -1,0 +1,47 @@
+/* Move down content because we have a fixed navbar that is 3.5rem tall */
+body {
+  padding-top: 3.5rem;
+}
+
+ol li.list-group-item {
+    list-style: decimal inside;
+    display: list-item;
+}
+
+.nav-sidebar {
+ padding-top: 3.5rem;
+}
+
+.column-title {
+    text-align: center;
+}
+
+.column-text {
+
+}
+
+.column-text-center {
+  text-align: center;
+}
+
+a.panel-heading-link {
+	font-weight: bold;
+	color: white;
+	/*text-decoration: underline;*/
+}
+
+.nav-sidebar > li.active {
+    background-color: whitesmoke;
+}
+
+.nav-login-form {
+    padding-right: 50px;
+}
+
+.form-error {
+  color: salmon;
+}
+
+.view-body {
+  padding: 10px;
+}

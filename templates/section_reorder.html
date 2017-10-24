@@ -1,0 +1,66 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{ define "jumbotron" }}
+    <div class="jumbotron">
+      <h1>Reorder sections for {{ .Work.Title }}</h1>
+      <p>(Click and drag the <span class="glyphicon glyphicon-move" aria-hidden="true"></span>)</p>
+      <p>
+        <form action="{{ URLFor "section_reorder" }}{{ .Work.Id }}" method="POST">
+        <div class="form-group">
+          <input type="hidden" id="section-order" name="section-order" value="foo">
+          <input type="submit" class="btn btn-success" value="Save">
+        </div>
+      </form>
+      </p>
+    </div>
+{{ end }}
+
+{{ define "body" }}
+<div class="row">
+    <div class="col-md-10">
+        <div id="sectionsList" class="list-group">
+            {{ range .SectionsList }}
+            <div class="list-group-item ordered-section" id="{{ .Id }}">
+              <span class="glyphicon glyphicon-move" aria-hidden="true"></span>
+              {{ .Title }}
+              <p><small>{{ AsHTML .Blurb }}</small></p>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+<script src="http://rubaxa.github.io/Sortable/Sortable.js"></script>
+{{ template "formscripts" . }}
+
+<script type="text/javascript">
+$(function() {
+    Sortable.create(sectionsList, {
+      handle: '.glyphicon-move',
+      animation: 150,
+      onEnd: function (evt) {
+            setOrderValue(); // dragged HTMLElement
+            //evt.to;    // target list
+            //evt.from;  // previous list
+            //evt.oldIndex;  // element's old index within old parent
+            //evt.newIndex;  // element's new index within new parent
+        },
+    });
+    setOrderValue();
+});
+
+function setOrderValue() {
+    var allSections = $('.ordered-section');
+    var newOrder = "";
+    for (var i=0; i < allSections.length; i++) {
+        newOrder += allSections[i].id + "-" + (i+1);
+        if (i < allSections.length-1) {
+            newOrder += ",";
+        }
+    }
+    $('#section-order').val(newOrder);
+}
+</script>
+{{ end }}

@@ -1,0 +1,97 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "NHQfiS8m+veKimFRVXgomeNq5vo=",
+			"path": "github.com/bradfitz/slice",
+			"revision": "d9036e2120b5ddfa53f3ebccd618c4af275f47da",
+			"revisionTime": "2016-08-23T17:19:49Z"
+		},
+		{
+			"checksumSHA1": "VzEecf3svU31GgvQjt801IxLwO4=",
+			"path": "github.com/bwmarrin/go-alone",
+			"revision": "769ca415978a65a1fa8b47f528e232822ca58f11",
+			"revisionTime": "2017-09-05T18:25:37Z"
+		},
+		{
+			"checksumSHA1": "HmbftipkadrLlCfzzVQ+iFHbl6g=",
+			"path": "github.com/golang/glog",
+			"revision": "23def4e6c14b4da8ac2ed8007337bc5eb5007998",
+			"revisionTime": "2016-01-25T20:49:56Z"
+		},
+		{
+			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
+			"path": "github.com/gorilla/context",
+			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",
+			"revisionTime": "2016-08-17T18:46:32Z"
+		},
+		{
+			"checksumSHA1": "ucTBCc7dDRKLGPsYfAzu/Gq63qA=",
+			"path": "github.com/gorilla/securecookie",
+			"revision": "e59506cc896acb7f7bf732d4fdf5e25f7ccd8983",
+			"revisionTime": "2017-02-24T19:38:04Z"
+		},
+		{
+			"checksumSHA1": "dxwmtflRNX8Q+gtB5EchmMwFnpQ=",
+			"path": "github.com/gorilla/sessions",
+			"revision": "a3acf13e802c358d65f249324d14ed24aac11370",
+			"revisionTime": "2017-10-08T21:47:40Z"
+		},
+		{
+			"checksumSHA1": "+hQAF7/X0rDg/sXFbUkoUHfLsx8=",
+			"path": "github.com/lib/pq",
+			"revision": "017e4c14d80628353eaee677a1aeffe47a10c0dc",
+			"revisionTime": "2017-10-11T13:52:33Z"
+		},
+		{
+			"checksumSHA1": "ATnwV0POluBNQEMjPdylodz0oK0=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "017e4c14d80628353eaee677a1aeffe47a10c0dc",
+			"revisionTime": "2017-10-11T13:52:33Z"
+		},
+		{
+			"checksumSHA1": "TKJMrflheuZVlOTJcp16X54drRc=",
+			"path": "github.com/sendgrid/rest",
+			"revision": "2c3a01ad75eecde75bba0fe5837c3ff706641d63",
+			"revisionTime": "2017-10-22T22:21:23Z"
+		},
+		{
+			"checksumSHA1": "u7Q6fPkD11DfgH7Hiqe07lspjgY=",
+			"path": "github.com/sendgrid/sendgrid-go",
+			"revision": "0141a7c5067a61ccd77522c5bd206657449392a0",
+			"revisionTime": "2017-10-22T22:29:21Z"
+		},
+		{
+			"checksumSHA1": "aVxwH7hqU5h0qD4w8PSwnbp9epo=",
+			"path": "github.com/sendgrid/sendgrid-go/helpers/mail",
+			"revision": "0141a7c5067a61ccd77522c5bd206657449392a0",
+			"revisionTime": "2017-10-22T22:29:21Z"
+		},
+		{
+			"checksumSHA1": "1UGRwtRmdzxssa5Vg3SFBbgWwOE=",
+			"path": "go4.org/reflectutil",
+			"revision": "034d17a462f7b2dcd1a4a73553ec5357ff6e6c6e",
+			"revisionTime": "2017-05-24T23:16:39Z"
+		},
+		{
+			"checksumSHA1": "UWjVYmoHlIfHzVIskELHiJQtMOI=",
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": "edd5e9b0879d13ee6970a50153d85b8fec9f7686",
+			"revisionTime": "2017-10-19T01:58:03Z"
+		},
+		{
+			"checksumSHA1": "5TlXhxVMqfHQKpCKucmXNeE6/kc=",
+			"path": "golang.org/x/crypto/blake2b",
+			"revision": "edd5e9b0879d13ee6970a50153d85b8fec9f7686",
+			"revisionTime": "2017-10-19T01:58:03Z"
+		},
+		{
+			"checksumSHA1": "oVPHWesOmZ02vLq2fglGvf+AMgk=",
+			"path": "golang.org/x/crypto/blowfish",
+			"revision": "edd5e9b0879d13ee6970a50153d85b8fec9f7686",
+			"revisionTime": "2017-10-19T01:58:03Z"
+		}
+	],
+	"rootPath": "bitbucket.org/jtyburke/pathfork"
+}

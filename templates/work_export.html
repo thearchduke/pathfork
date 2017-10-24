@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<body>
+<h1>{{ .Work.Title }}</h1>
+<h3>{{ AsHTML .Work.Blurb }}</h3>
+
+<hr />
+
+<h2>Table of Contents</h2>
+<ol>
+{{ range .SectionsList }}
+<li>{{ .Title }}</li>
+{{ end }}
+</ol>
+
+<hr />
+
+<h2>Characters</h2>
+{{ range $i, $char := .CharactersList }}
+<h4>{{ Add $i 1 }}: {{ .Name }}</h4>
+<b>{{ AsHTML .Blurb }}</b>
+{{ AsHTML .Body }}
+{{ end }}
+
+<hr />
+
+<h2>Settings</h2>
+{{ range $i, $setting := .SettingsList }}
+<h4>{{ Add $i 1 }}: {{ .Name }}</h4>
+<b>{{ AsHTML .Blurb }}</b>
+{{ AsHTML .Body }}
+{{ end }}
+
+<hr />
+
+{{ range $i, $section := .SectionsList }}
+<h1>{{ Add $i 1 }}: {{ .Title }}</h1>
+<h4>{{ AsHTML .Blurb }}</h4>
+{{ AsHTML .Body }}
+<hr />
+{{ end }}
+
+<hr />
+
+<h1>Snippets</h1>
+
+{{ range $i, $snippet := .SnippetsList }}
+<h1>{{ Add $i 1 }}: {{ .Title }}</h1>
+<h4>{{ AsHTML .Blurb }}</h4>
+{{ AsHTML .Body }}
+<hr />
+{{ end }}
+
+</body>
+
+<hr />

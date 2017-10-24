@@ -1,0 +1,32 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{ define "jumbotron" }}
+    <div class="jumbotron">
+      <h1>Who have we here?</h1>
+    </div>
+{{ end }}
+
+{{ define "body" }}
+    <div class="col-md-10">
+  {{ if not .CharactersList }}
+    <h4 class="column-title">Looks like you haven't made any characters yet. You can <a href="{{ URLFor "character_new" }}">get started with one here</a>.</h4>
+    {{ else }}
+    <h4><a href="{{ URLFor "character_new" }}"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add a character</a></h4>
+  {{ end }}
+  <hr />
+  {{ range .CharactersList }}
+        <div class="row">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a href="{{ URLFor "character_view" }}{{ .Id }}"><span class="glyphicon glyphicon-zoom-in"></span>&nbsp;{{ .Name }}</a>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                  {{ AsHTML .Blurb }}
+                </div>
+            </div>
+        </div>
+  {{ end }}
+  </div>
+{{ end }}

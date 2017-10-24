@@ -1,0 +1,47 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{ define "jumbotron" }}
+    <div class="jumbotron">
+      <h1>{{ .Headline }}</h1>
+      <p>
+        {{ AsHTML .Character.Blurb }}
+      </p>
+      <p>
+          <a href="{{ URLFor "character_edit" }}{{ .Character.Id }}"><span class="glyphicon glyphicon-pencil"></span>&nbsp;edit</a>
+      </p>
+    </div>
+{{ end }}
+
+{{ define "body" }}
+<div class="row">
+    <div class="col-md-7">
+        <div class="panel panel-info">
+          <div class="view-body">
+            {{ AsHTML .Character.Body }}
+          </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="row">
+        <div class="panel panel-warning">
+          <div class="panel-heading"><h3>Appearances</h3></div>
+          <ul class="list-group">
+              {{ range $work, $sections := .SectionsByWork }}
+              <li class="list-group-item">
+                <div class="panel-heading"><a href="{{ URLFor "work_view" }}{{ $work.Id }}"><span class="glyphicon glyphicon-book" aria-hidden="true"></span>&nbsp;&nbsp;{{ $work.Title }}</a></div>
+                <ul class="list-group">
+                  {{ range $sections }}
+                    <li class="list-group-item">
+                      &nbsp;&nbsp;<a href="{{ URLFor "section_view" }}{{ .Id }}"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>&nbsp;&nbsp;{{ .Title }}</a>
+                    </li>
+                  {{ end }}
+                </ul>
+              </li>
+              {{ end }}
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>
+{{ end }}

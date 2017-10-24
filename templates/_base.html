@@ -1,0 +1,86 @@
+{{ define "base" }}
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37808317-2"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-37808317-2');
+        </script>
+
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	    <meta name="blurb" content="">
+	    <meta name="author" content="">
+	    <link rel="icon" href="../../favicon.ico">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.js" type="text/javascript"></script>
+	    <link rel="stylesheet" href="{{ StaticURL "css/bootstrap.min.css" }}">
+	    <link rel="stylesheet" href="{{ StaticURL "css/bootstrap-theme.min.css" }}">
+	    <script src="{{ StaticURL "js/bootstrap.min.js" }}"></script>
+	    <link rel="stylesheet" href="{{ StaticURL "css/main.css" }}">
+        <link rel="stylesheet" href="{{ StaticURL "css/chosen.min.css" }}">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Pathfork | {{ template "title" . }}</title>
+		<style>
+		{{ block "styles" . }}{{ end }}
+		</style>
+	</head>
+
+	<body>
+    {{ template "nav" . }}
+    <div class="container-fluid">
+      <div class="row">
+        {{ template "sidebar" . }}
+        <div class="col-md-10 main">
+
+        {{ if .Universals.Flashes }}
+        <br />
+            {{ range .Universals.Flashes }}
+                <div class="alert alert-info col-md-10">
+                        <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>&nbsp;&nbsp;{{ . }}
+                </div>
+            {{ end }}
+        {{ end }}
+
+        <div class="col-md-10">
+        {{ template "jumbotron" . }}
+        <h2 style="color: green;">NOTE: This site is not in production yet. Feel free to play around but note that anything you save may be deleted.</h2>
+        </div>
+    	{{ template "body" . }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-10-offset-1">
+            <footer class="footer">
+            {{ template "footer" . }}
+            </footer>
+        </div>
+      </div>
+	</div>
+
+    <script type="text/javascript">
+        $('.nav-{{ .Name }}').addClass('active');
+        function hideBreadcrumb() {
+            var workView = {{ URLFor "work_view" }};
+            var workViewSplit = workView.split('/');
+            var currentPathSplit = window.location.pathname.split('/');
+            if (currentPathSplit.length > 2 && workViewSplit[1] == currentPathSplit[1] && workViewSplit[2] == currentPathSplit[2]) {
+                $('.nav-breadcrumb').hide();
+            }
+        }
+        hideBreadcrumb();
+        $('[data-toggle="tooltip"]').tooltip();   
+    </script>
+    {{ block "scripts" . }}{{ end }}
+
+</body>
+</html>
+{{ end }}

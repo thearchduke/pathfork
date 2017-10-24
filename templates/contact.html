@@ -1,0 +1,24 @@
+{{ define "title" }}Contact{{ end }}
+
+{{ define "jumbotron" }}
+<div class="jumbotron">
+  <h1>Contact us</h1>
+  <p>Use this handy form to send us an email.</p>
+</div>
+{{ end }}
+
+{{ define "sidebar" }}
+<div class="col-sm-2 col-md-2 sidebar">
+</div>
+{{ end }}
+
+
+{{ define "body" }}
+<div class="col-md-10">
+    <form action="{{ URLFor "contact" }}" method="POST">
+      {{ WrapField .Form.Fields.email }}<br/>
+      {{ WrapTextAreaField .Form.Fields.message "5" "9" }}<br/>
+      <input type="submit" value="Submit">
+    </form>
+</div>
+{{ end }}

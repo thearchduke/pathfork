@@ -1,0 +1,33 @@
+{{ define "title" }}Dashboard{{ end }}
+
+{{ define "jumbotron" }}
+    <div class="jumbotron">
+      <h1>Dashboard</h1>
+      <p>Welcome back!</p>
+    </div>
+{{ end }}
+
+{{ define "body" }}
+    <div class="col-md-10">
+    {{ if .WorksList }}
+        <h1 class="column-title">What would you like to work on today?</h1>
+        <h4 class="column-title">(Or perhaps you'd like to <a href="{{ URLFor "work_new" }}"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;start something new</a>?)</h4>
+    {{ else }}
+        <h4 class="column-title">Looks like you're new here. Why don't you <a href="{{ URLFor "work_new" }}">get started on a work</a>?</h4>
+    {{ end }}
+  {{ range .WorksList }}
+        <div class="row">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a href="{{ URLFor "work_view" }}{{ .Id }}"><span class="glyphicon glyphicon-zoom-in"></span>&nbsp;{{ .Title }}</a>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                  {{ AsHTML .Blurb }}
+                </div>
+            </div>
+        </div>
+  {{ end }}
+  </div>
+{{ end }}

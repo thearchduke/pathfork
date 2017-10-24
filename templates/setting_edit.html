@@ -1,0 +1,42 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{ define "jumbotron" }}
+    <div class="jumbotron">
+      <h1>{{ .Headline }}</h1>
+      {{ if .DeleteForm }}
+      <p>
+        <form action="{{ URLFor "setting_delete" }}{{ .Setting.Id }}" method="POST" onclick="return confirm('Are you sure you want to delete this?');">
+        <div class="form-group">
+          {{ .DeleteForm.Fields.id.Render }}
+          <input type="submit" class="btn btn-danger" value="Delete">
+        </div>
+      </form>
+      </p>
+      {{ end }}
+    </div>
+{{ end }}
+
+{{ define "body" }}
+<div class="row">
+    <div class="col-md-10">
+        {{ if .NewObj }}
+          <form action="{{ URLFor "setting_new" }}?workId={{ .ParentId }}" method="POST">
+        {{ else }}
+          <form action="{{ URLFor "setting_edit" }}{{ .Setting.Id }}" method="POST">
+        {{ end }}
+        <div class="form-group">
+          {{ WrapField .Form.Fields.name }} <br />
+          {{ WrapTextAreaField .Form.Fields.blurb "5" "9" }}
+          <hr/>
+          {{ WrapTextAreaField .Form.Fields.body "15" "12" }} <br />
+          <input type="submit" class="btn btn-default" value="Save">
+        </div>
+    </div>
+</div>
+<div class="row">
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+  {{ template "formscripts" . }}
+{{ end }}

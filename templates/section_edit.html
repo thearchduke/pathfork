@@ -1,0 +1,59 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{ define "jumbotron" }}
+    <div class="jumbotron">
+      <h1>{{ AsHTML .Title }}</h1>
+      <p>
+          {{ AsHTML .Section.Blurb }}
+      </p>
+      {{ if .DeleteForm }}
+      <p>
+        <form action="{{ URLFor "section_delete" }}{{ .Section.Id }}" method="POST" onclick="return confirm('Are you sure you want to delete this?');">
+        <div class="form-group">
+          {{ .DeleteForm.Fields.id.Render }}
+          <input type="submit" class="btn btn-danger" value="Delete">
+        </div>
+      </form>
+      </p>
+      {{ end }}
+    </div>
+{{ end }}
+
+{{ define "body" }}
+<div class="row">
+    <div class="col-md-10">
+      {{ if .NewObj }}
+        <form action="{{ URLFor "section_new" }}?workId={{ .ParentId }}" method="POST">
+      {{ else }}
+        <form action="{{ URLFor "section_edit" }}{{ .Section.Id }}" method="POST">
+      {{ end }}
+        <div class="form-group">
+          {{ .Form.Fields.work_id.Render }}
+          {{ .Form.Fields.currentCharIds.Render }}
+          {{ .Form.Fields.currentSettingIds.Render }}
+          {{ WrapField .Form.Fields.title }} <br/>
+          {{ WrapField .Form.Fields.characters }} <br/>
+          {{ WrapField .Form.Fields.settings }}
+          <p>
+            <small>N.B.: Characters and Settings only let you select from items you've defined in the Characters and Settings sections.</small>
+          </p>
+          {{ WrapField .Form.Fields.snippet }}
+          <p>
+            <small>Snippets are not shown in the table of contents</small>
+          </p>
+          {{ WrapTextAreaField .Form.Fields.blurb "5" "9" }}
+          <hr />
+          {{ WrapTextAreaField .Form.Fields.body "15" "12" }}
+          <br />
+          <input type="submit" class="btn btn-default" value="Save">
+        </div>
+      </form>
+    </div>
+</div>
+<div class="row">
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+  {{ template "formscripts" . }}
+{{ end }}

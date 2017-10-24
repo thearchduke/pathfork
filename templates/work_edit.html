@@ -1,0 +1,49 @@
+{{ define "title" }}{{ .Title }}{{ end }}
+
+{{ define "jumbotron" }}
+    <div class="jumbotron">
+      <h1>{{ .Headline }}</h1>
+      {{ if .DeleteForm }}
+      <p>
+        <form action="{{ URLFor "work_delete" }}{{ .Work.Id }}" method="POST" onclick="return confirm('Are you sure you want to delete this?');">
+        <div class="form-group">
+          {{ .DeleteForm.Fields.id.Render }}
+          <input type="submit" class="btn btn-danger" value="Delete">
+        </div>
+      </form>
+      </p>
+      {{ end }}
+    </div>
+{{ end }}
+
+{{ define "body" }}
+<div class="row">
+    <div class="col-md-10">
+        {{ if .NewObj }}
+          <form action="{{ URLFor "work_new" }}" method="POST">
+        {{ else }}
+          <form action="{{ URLFor "work_edit" }}{{ .Work.Id }}" method="POST">
+        {{ end }}
+        <div class="form-group">
+          {{ .Form.Fields.currentCharIds.Render }}
+          {{ .Form.Fields.currentSettingIds.Render }}
+          {{ WrapField .Form.Fields.title }} <br />
+          {{ WrapField .Form.Fields.characters }} <br />
+          {{ WrapField .Form.Fields.settings }} <br />
+          <p>
+            <small>N.B.: Characters and Settings only let you select from items you've defined in the Characters and Settings sections.</small>
+          </p>
+          <hr />
+          {{ WrapTextAreaField .Form.Fields.blurb "5" "9" }} <br />
+          <input type="submit" class="btn btn-default" value="Save">
+        </div>
+      </form>
+    </div>
+</div>
+<div class="row">
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+  {{ template "formscripts" . }}
+{{ end }}
