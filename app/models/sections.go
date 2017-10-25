@@ -232,9 +232,10 @@ func ReorderSectionsFromFormValue(rawOrder string, workId int, tx *sql.Tx) error
 	}
 	updateStr += `
 	) AS mt(section_id, section_order)
-	WHERE mt.section_id::integer=tbl_section.section_id::integer`
+	WHERE mt.section_id::integer=tbl_section.section_id::integer `
+	updateStr += fmt.Sprintf("AND tbl_section.work_id::integer=$%v", len(splitOrder)*2+1)
+	updateArgs = append(updateArgs, workId)
 	stmt, err := tx.Prepare(updateStr)
-	glog.Info(updateStr, updateArgs)
 	if err != nil {
 		glog.Errorf("Reorder database error: %v", err.Error())
 		tx.Rollback()

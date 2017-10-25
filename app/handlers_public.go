@@ -40,7 +40,8 @@ func (h HomeHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 		valid := form.Validate()
 		passwordMatch := r.FormValue("password") == r.FormValue("repeatPassword")
 		if valid && passwordMatch {
-			newUser, err := models.NewUser(strings.ToLower(r.FormValue("email")), r.FormValue("password"))
+			newEmail := strings.TrimSpace(strings.ToLower(r.FormValue("email")))
+			newUser, err := models.NewUser(newEmail, r.FormValue("password"))
 			if err != nil {
 				glog.Errorf("User creation error %v", err.Error())
 				manager.AddFlash("Sorry, we're having trouble saving that password.")
@@ -229,7 +230,7 @@ func (h AuthHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	next, ok := query["next"]
-	toForward := URLFor("home")
+	toForward := URLFor("dashboard")
 	if ok && len(next) > 1 {
 		toForward = next[0]
 	}
