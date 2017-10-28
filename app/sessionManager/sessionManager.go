@@ -44,6 +44,12 @@ func (s SessionManager) SetCurrentWork(id int, title string) error {
 	return s.Save()
 }
 
+func (s SessionManager) UnsetCurrentWork() error {
+	delete(s.Session.Values, "workId")
+	delete(s.Session.Values, "workTitle")
+	return s.Save()
+}
+
 func (s SessionManager) GetCurrentWork() (int, string) {
 	id := s.Session.Values["workId"]
 	if id == nil {

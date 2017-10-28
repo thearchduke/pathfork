@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"bitbucket.org/jtyburke/pathfork/app/config"
 	"bitbucket.org/jtyburke/pathfork/app/sessionManager"
-	"github.com/bwmarrin/go-alone"
+	goalone "github.com/bwmarrin/go-alone"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
@@ -70,6 +71,18 @@ func NewSigner() *goalone.Sword {
 	return signer
 }
 
+func NewTimestampSigner() *goalone.Sword {
+	signer := goalone.New([]byte(config.HMACKey), goalone.Timestamp)
+	return signer
+}
+
+func NewToken(identifier, kind string) string {
+	signer := NewSigner()
+	token := signer.Sign([]byte(fmt.Sprintf("%v||%v", identifier, kind)))
+	encoded := base64.URLEncoding.EncodeToString(token)
+	return string(encoded)
+}
+
 func VerifyToken(kind, token string) (string, bool) {
 	decoded, _ := base64.URLEncoding.DecodeString(token)
 	signer := NewSigner()
@@ -84,9 +97,23 @@ func VerifyToken(kind, token string) (string, bool) {
 	return split[0], true
 }
 
-func NewToken(email, kind string) string {
-	signer := NewSigner()
-	token := signer.Sign([]byte(fmt.Sprintf("%v||%v", email, kind)))
+func NewTSToken(identifier, kind string) string {
+	signer := NewTimestampSigner()
+	token := signer.Sign([]byte(fmt.Sprintf("%v||%v", identifier, kind)))
 	encoded := base64.URLEncoding.EncodeToString(token)
 	return string(encoded)
+}
+
+func VerifyTSToken(kind, token string, minutes float64) (string, bool) {
+	decoded, _ := base64.URLEncoding.DecodeString(token)
+	signer := NewTimestampSigner()
+	raw := signer.Parse([]byte(decoded))
+	if time.Since(raw.Timestamp).Minutes() > minutes {
+		return "expired", false
+	}
+	split := strings.Split(string(raw.Payload), "||")
+	if fmt.Sprintf("%v||%v", split[0], kind) != string(raw.Payload) {
+		return "", false
+	}
+	return split[0], true
 }

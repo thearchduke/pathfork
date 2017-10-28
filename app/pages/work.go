@@ -36,7 +36,7 @@ func GetWorkEditPage(sm sessionManager.SessionManager, database *db.DB, verifiab
 		models.GetSettingsForUser(sm.GetUserEmail(), database),
 		models.GetSettingsForWork(work.Id, database)...,
 	)
-	form := forms.NewWorkForm(charsMap, settingsMap)
+	form := forms.NewWorkForm(charsMap, settingsMap, sm)
 	form.Fields["title"].SetData(work.Title)
 	form.Fields["blurb"].SetData(work.Blurb)
 	return WebPage{
@@ -46,7 +46,7 @@ func GetWorkEditPage(sm sessionManager.SessionManager, database *db.DB, verifiab
 		Work:       work,
 		Form:       form,
 		Universals: getUniversals(sm),
-		DeleteForm: forms.NewDeleteForm(work.Id),
+		DeleteForm: forms.NewDeleteForm(work.Id, sm),
 	}
 }
 
@@ -62,7 +62,7 @@ func GetWorkNewPage(sm sessionManager.SessionManager, database *db.DB, args ...s
 		Title:      "Add a work",
 		Name:       "work_new",
 		Work:       &models.Work{},
-		Form:       forms.NewWorkForm(charsMap, settingsMap),
+		Form:       forms.NewWorkForm(charsMap, settingsMap, sm),
 		NewObj:     true,
 		Universals: getUniversals(sm),
 	}

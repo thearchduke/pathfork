@@ -7,6 +7,7 @@
       <p>
         <form action="{{ URLFor "work_delete" }}{{ .Work.Id }}" method="POST" onclick="return confirm('Are you sure you want to delete this?');">
         <div class="form-group">
+          {{ .DeleteForm.Fields.csrf.Render }}
           {{ .DeleteForm.Fields.id.Render }}
           <input type="submit" class="btn btn-danger" value="Delete">
         </div>
@@ -25,6 +26,7 @@
           <form action="{{ URLFor "work_edit" }}{{ .Work.Id }}" method="POST">
         {{ end }}
         <div class="form-group">
+          {{ .Form.Fields.csrf.Render }}
           {{ .Form.Fields.currentCharIds.Render }}
           {{ .Form.Fields.currentSettingIds.Render }}
           {{ WrapField .Form.Fields.title }} <br />

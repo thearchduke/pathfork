@@ -201,13 +201,18 @@ func (h SettingDeleteHandler) HandleRequest(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	setting := response.Obj.(*models.Setting)
-	form := forms.NewDeleteForm(setting.Id)
+	form := forms.NewDeleteForm(setting.Id, manager)
 	form.Populate(r)
-	if r.Method == "POST" && form.Validate() {
-		idToDelete, _ := strconv.Atoi(r.FormValue("object_id"))
-		success, err := models.DeleteSetting(idToDelete, h.db)
-		if err != nil || !success {
-			glog.Error(err)
+	if r.Method == "POST" {
+		if form.Validate() {
+			idToDelete, _ := strconv.Atoi(r.FormValue("object_id"))
+			success, err := models.DeleteSetting(idToDelete, h.db)
+			if err != nil || !success {
+				glog.Error(err)
+				http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("setting_view"), setting.Id), 301)
+				return
+			}
+		} else {
 			http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("setting_view"), setting.Id), 301)
 			return
 		}

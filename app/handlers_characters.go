@@ -201,13 +201,18 @@ func (h CharacterDeleteHandler) HandleRequest(w http.ResponseWriter, r *http.Req
 		return
 	}
 	character := response.Obj.(*models.Character)
-	form := forms.NewDeleteForm(character.Id)
+	form := forms.NewDeleteForm(character.Id, manager)
 	form.Populate(r)
-	if r.Method == "POST" && form.Validate() {
-		idToDelete, _ := strconv.Atoi(r.FormValue("object_id"))
-		success, err := models.DeleteCharacter(idToDelete, h.db)
-		if err != nil || !success {
-			glog.Error(err)
+	if r.Method == "POST" {
+		if form.Validate() {
+			idToDelete, _ := strconv.Atoi(r.FormValue("object_id"))
+			success, err := models.DeleteCharacter(idToDelete, h.db)
+			if err != nil || !success {
+				glog.Error(err)
+				http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("character_view"), character.Id), 301)
+				return
+			}
+		} else {
 			http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("character_view"), character.Id), 301)
 			return
 		}

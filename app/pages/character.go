@@ -37,7 +37,7 @@ func GetCharacterViewPage(sm sessionManager.SessionManager, verifiable interface
 
 func GetCharacterEditPage(sm sessionManager.SessionManager, database *db.DB, verifiable interface{}) WebPage {
 	character := verifiable.(*models.Character)
-	form := forms.NewCharacterForm()
+	form := forms.NewCharacterForm(sm)
 	form.Fields["name"].SetData(character.Name)
 	form.Fields["blurb"].SetData(character.Blurb)
 	form.Fields["body"].SetData(character.Body)
@@ -48,12 +48,12 @@ func GetCharacterEditPage(sm sessionManager.SessionManager, database *db.DB, ver
 		Form:       form,
 		Character:  character,
 		Universals: getUniversals(sm),
-		DeleteForm: forms.NewDeleteForm(character.Id),
+		DeleteForm: forms.NewDeleteForm(character.Id, sm),
 	}
 }
 
 func GetCharacterNewPage(sm sessionManager.SessionManager, database *db.DB, args ...string) WebPage {
-	form := forms.NewCharacterForm()
+	form := forms.NewCharacterForm(sm)
 	workId := args[0]
 	return WebPage{
 		Headline:   "You must be the new guy.",

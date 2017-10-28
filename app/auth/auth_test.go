@@ -33,7 +33,7 @@ func TestAuthenticator(t *testing.T) {
 		t.Error("userEmail is set at init for some reason")
 	}
 	//TODO these tests are broken
-	authenticator.LogUserIn("tynanburke@gmail.com", "password", "password")
+	authenticator.Manager.SetUser("tynanburke@gmail.com")
 	if authenticator.Manager.Session.Values["userEmail"] != "tynanburke@gmail.com" {
 		t.Error("SetUser not working")
 	}
@@ -56,5 +56,14 @@ func TestTokens(t *testing.T) {
 	_, verified = VerifyToken("flooglemorp", newToken)
 	if verified {
 		t.Error("False positive on token verification")
+	}
+	newTSToken := NewTSToken("tynanburke@gmail.com", "csrf")
+	identifier, valid := VerifyTSToken("csrf", newTSToken, 0)
+	if !(!valid && identifier == "expired") {
+		t.Errorf("Expiration invalidation failing with valid=%v, ident=%v", valid, identifier)
+	}
+	identifier, valid = VerifyTSToken("csrf", newTSToken, 1)
+	if !(valid && identifier == "tynanburke@gmail.com") {
+		t.Errorf("Validation failing with valid=%v, ident=%v", valid, identifier)
 	}
 }

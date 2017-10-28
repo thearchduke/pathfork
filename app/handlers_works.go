@@ -179,13 +179,19 @@ func (h WorkDeleteHandler) HandleRequest(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	work := response.Obj.(*models.Work)
-	form := forms.NewDeleteForm(work.Id)
+	form := forms.NewDeleteForm(work.Id, manager)
 	form.Populate(r)
-	if r.Method == "POST" && form.Validate() {
-		idToDelete, _ := strconv.Atoi(r.FormValue("object_id"))
-		success, err := models.DeleteWork(idToDelete, h.db)
-		if err != nil || !success {
-			glog.Error(err)
+	if r.Method == "POST" {
+		if form.Validate() {
+			idToDelete, _ := strconv.Atoi(r.FormValue("object_id"))
+			success, err := models.DeleteWork(idToDelete, h.db)
+			if err != nil || !success {
+				glog.Error(err)
+				http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("work_view"), work.Id), 301)
+				return
+			}
+			manager.UnsetCurrentWork()
+		} else {
 			http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("work_view"), work.Id), 301)
 			return
 		}

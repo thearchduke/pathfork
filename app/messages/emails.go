@@ -61,9 +61,9 @@ func SendResetPasswordEmail(recipient string) error {
 	from := []string{"Pathfork App", "pathforkapp@gmail.com"}
 	to := []string{"Pathfork user", recipient}
 	subject := "Here's the link to reset your Pathfork password"
-	token := auth.NewToken(recipient, "reset-password")
+	token := auth.NewTSToken(recipient, "reset-password")
 	link := fmt.Sprintf("https://pathfork.herokuapp.com/reset?action=reset&token=%v", token) // FIXME argh hardcode url
-	body := fmt.Sprintf("Please follow this link to reset your password: %v", link)
+	body := fmt.Sprintf("Please follow this link to reset your password (this link will expire in 72 hours): %v", link)
 	verificationEmail := email{
 		From:    from,
 		To:      to,

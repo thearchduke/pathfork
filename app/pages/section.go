@@ -33,7 +33,7 @@ func GetSectionEditPage(sm sessionManager.SessionManager, database *db.DB, verif
 		models.GetSettingsForUser(sm.GetUserEmail(), database),
 		models.GetSettingsForSection(section.Id, database)...,
 	)
-	form := forms.NewSectionForm(charsMap, settingsMap)
+	form := forms.NewSectionForm(charsMap, settingsMap, sm)
 	form.Fields["title"].SetData(section.Title)
 	form.Fields["blurb"].SetData(section.Blurb)
 	form.Fields["body"].SetData(section.Body)
@@ -46,7 +46,7 @@ func GetSectionEditPage(sm sessionManager.SessionManager, database *db.DB, verif
 		Section:    section,
 		Form:       form,
 		Universals: getUniversals(sm),
-		DeleteForm: forms.NewDeleteForm(section.Id),
+		DeleteForm: forms.NewDeleteForm(section.Id, sm),
 	}
 }
 
@@ -68,7 +68,7 @@ func GetSectionNewPage(sm sessionManager.SessionManager, database *db.DB, args .
 	settingsMap := forms.SettingsToFormOptions(
 		models.GetSettingsForUser(sm.GetUserEmail(), database),
 	)
-	form := forms.NewSectionForm(charsMap, settingsMap)
+	form := forms.NewSectionForm(charsMap, settingsMap, sm)
 	workId := args[0]
 	return WebPage{
 		Title:      "New section",

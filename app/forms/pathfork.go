@@ -2,6 +2,8 @@ package forms
 
 import (
 	"fmt"
+
+	"bitbucket.org/jtyburke/pathfork/app/sessionManager"
 )
 
 func NewContactForm() *Form {
@@ -59,7 +61,8 @@ func NewResetPasswordForm() *Form {
 	)
 }
 
-func NewWorkForm(characterOptions []map[string]string, settingOptions []map[string]string) *Form {
+func NewWorkForm(characterOptions []map[string]string, settingOptions []map[string]string,
+	sm sessionManager.SessionManager) *Form {
 	currentCharIds := GetCurrentIds(characterOptions)
 	characters := NewSelectField("Characters", "characters", false, characterOptions...)
 	currentSettingIds := GetCurrentIds(settingOptions)
@@ -72,11 +75,13 @@ func NewWorkForm(characterOptions []map[string]string, settingOptions []map[stri
 			"currentCharIds":    &HiddenField{Name: "currentCharIds", Value: currentCharIds},
 			"settings":          settings,
 			"currentSettingIds": &HiddenField{Name: "currentSettingIds", Value: currentSettingIds},
+			"csrf":              NewCSRFField(sm),
 		},
 	)
 }
 
-func NewSectionForm(characterOptions []map[string]string, settingOptions []map[string]string) *Form {
+func NewSectionForm(characterOptions []map[string]string, settingOptions []map[string]string,
+	manager sessionManager.SessionManager) *Form {
 	currentCharIds := GetCurrentIds(characterOptions)
 	currentSettingIds := GetCurrentIds(settingOptions)
 	characters := NewSelectField("Characters", "characters", false, characterOptions...)
@@ -92,34 +97,38 @@ func NewSectionForm(characterOptions []map[string]string, settingOptions []map[s
 			"snippet":           snippet,
 			"currentCharIds":    &HiddenField{Name: "currentCharIds", Value: currentCharIds},
 			"currentSettingIds": &HiddenField{Name: "currentSettingIds", Value: currentSettingIds},
+			"csrf":              NewCSRFField(manager),
 		},
 	)
 }
 
-func NewCharacterForm() *Form {
+func NewCharacterForm(sm sessionManager.SessionManager) *Form {
 	return NewFormWithFields(
 		map[string]FormField{
 			"name":  NewBasicTextField("Name", "name", true),
 			"blurb": NewBasicTextAreaField("Blurb", "blurb", false),
 			"body":  NewBasicTextAreaField("Body", "body", false),
+			"csrf":  NewCSRFField(sm),
 		},
 	)
 }
 
-func NewSettingForm() *Form {
+func NewSettingForm(sm sessionManager.SessionManager) *Form {
 	return NewFormWithFields(
 		map[string]FormField{
 			"name":    NewBasicTextField("Name", "name", true),
 			"blurb":   NewBasicTextAreaField("Blurb", "blurb", false),
 			"body":    NewBasicTextAreaField("Body", "body", false),
 			"work_id": &HiddenField{Name: "work_id"},
+			"csrf":    NewCSRFField(sm),
 		},
 	)
 }
 
-func NewDeleteForm(objId int) *Form {
+func NewDeleteForm(objId int, manager sessionManager.SessionManager) *Form {
 	return NewFormWithFields(
 		map[string]FormField{
-			"id": &HiddenField{Name: "object_id", Value: fmt.Sprintf("%v", objId)},
+			"id":   &HiddenField{Name: "object_id", Value: fmt.Sprintf("%v", objId)},
+			"csrf": NewCSRFField(manager),
 		})
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/sessions"
 
 	"bitbucket.org/jtyburke/pathfork/app/auth"
+	"bitbucket.org/jtyburke/pathfork/app/config"
 	"bitbucket.org/jtyburke/pathfork/app/db"
 	"bitbucket.org/jtyburke/pathfork/app/forms"
 	"bitbucket.org/jtyburke/pathfork/app/messages"
@@ -276,18 +277,20 @@ func (h ResetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, URLFor("home"), 302)
 				return
 			}
+			return
 		} else if r.Method == "POST" {
 			form := page.Form
 			form.Populate(r)
 			if ok && form.Validate() {
-				user := models.GetUserByEmail(r.FormValue("email"), h.db)
+				emailInput := strings.TrimSpace(strings.ToLower(r.FormValue("email")))
+				user := models.GetUserByEmail(emailInput, h.db)
 				if user == nil {
 					manager.AddFlash("We don't have a record of that email address.")
 					// This is not an ultra-secure message! But user-friendly
 					http.Redirect(w, r, URLFor("home"), 302)
 					return
 				}
-				err := messages.SendResetPasswordEmail(r.FormValue("email"))
+				err := messages.SendResetPasswordEmail(emailInput)
 				glog.Info(auth.NewToken(r.FormValue("email"), "reset-password"))
 				msg := "OK, check your inbox for the reset email."
 				if err != nil {
@@ -300,8 +303,12 @@ func (h ResetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 		}
 	} else if action[0] == "reset" {
 		token, ok := query["token"]
-		email, valid := auth.VerifyToken("reset-password", token[0])
-		if !ok || !valid {
+		if !ok {
+			http.Redirect(w, r, URLFor("home"), 302)
+			return
+		}
+		email, valid := auth.VerifyTSToken("reset-password", token[0], config.PasswordResetValidTime)
+		if !valid {
 			manager.AddFlash("Sorry, that URL isn't valid.")
 			http.Redirect(w, r, URLFor("home"), 302)
 			return

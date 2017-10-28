@@ -28,7 +28,7 @@
 
         <div class="panel panel-info">
           <div class="panel-heading"><h3>Characters</h3>
-          <br /><small><a class="panel-heading-link" href="{{ URLFor "character_new" }}?workId={{ .Section.WorkId }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new character</a></small>
+          <small><a href="{{ URLFor "character_new" }}?workId={{ .Section.WorkId }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new character</a></small>
           </div>
           <ul class="list-group">
               {{ range .CharactersList }}
@@ -46,7 +46,7 @@
       <div class="row">
         <div class="panel panel-success">
           <div class="panel-heading"><h3>Settings</h3>
-          <br /><small><a class="panel-heading-link" href="{{ URLFor "setting_new" }}?workId={{ .Section.WorkId }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new setting</a></small>
+          <small><a href="{{ URLFor "setting_new" }}?workId={{ .Section.WorkId }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new setting</a></small>
           </div>
           <ul class="list-group">
               {{ range .SettingsList }}

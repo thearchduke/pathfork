@@ -16,7 +16,7 @@
     <div class="col-md-7">
         <div class="panel panel-primary">
           <div class="panel-heading"><h3>Table of Contents</h3>
-          <br /><a class="panel-heading-link" href="{{ URLFor "section_new" }}?workId={{ .Work.Id }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new section</a>
+          <a class="panel-heading-link" href="{{ URLFor "section_new" }}?workId={{ .Work.Id }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new section</a>
           <br /><a class="panel-heading-link" href="{{ URLFor "section_reorder" }}{{ .Work.Id }}"><span class="glyphicon glyphicon-sort"  aria-hidden="true"></span> re-order sections</a>
           </div>
           <ol class="list-group">
@@ -33,7 +33,7 @@
 
         <div class="panel panel-warning">
           <div class="panel-heading"><h3>Snippets</h3>
-          <br /><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> a snippet is just a section with the "snippet" box checked!
+          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> a snippet is just a section with the "snippet" box checked!
           </div>
           <ul class="list-group">
               {{ range .SnippetsList }}
@@ -53,7 +53,7 @@
 
         <div class="panel panel-info">
           <div class="panel-heading"><h3>Characters</h3>
-          <br /><small><a class="panel-heading-link" href="{{ URLFor "character_new" }}?workId={{ .Work.Id }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new character</a></small>
+          <small><a href="{{ URLFor "character_new" }}?workId={{ .Work.Id }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new character</a></small>
           </div>
           <ul class="list-group">
               {{ range .CharactersList }}
@@ -71,7 +71,7 @@
       <div class="row">
         <div class="panel panel-success">
           <div class="panel-heading"><h3>Settings</h3>
-          <br /><small><a class="panel-heading-link" href="{{ URLFor "setting_new" }}?workId={{ .Work.Id }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new setting</a></small>
+          <small><a href="{{ URLFor "setting_new" }}?workId={{ .Work.Id }}"><span class="glyphicon glyphicon-plus-sign"  aria-hidden="true"></span> add a new setting</a></small>
           </div>
           <ul class="list-group">
               {{ range .SettingsList }}

@@ -6,6 +6,9 @@ import (
 	"html/template"
 	"net/http"
 
+	"bitbucket.org/jtyburke/pathfork/app/auth"
+	"bitbucket.org/jtyburke/pathfork/app/config"
+	"bitbucket.org/jtyburke/pathfork/app/sessionManager"
 	"github.com/golang/glog"
 )
 
@@ -32,7 +35,7 @@ func (f *Form) Validate() (valid bool) {
 	valid = true
 	for i := range f.Fields {
 		if v, err := f.Fields[i].Validate(); !v {
-			fmt.Printf("Field error: %v", err)
+			glog.Info("Field error: %v", err)
 			valid = false
 		}
 	}
@@ -351,4 +354,64 @@ func (s *SelectField) Render(args ...string) template.HTML {
 	}
 	output += "</select>"
 	return template.HTML(output)
+}
+
+/*
+.
+.
+*/
+
+type CSRFField struct {
+	Name    string
+	Value   string
+	Email   string
+	Manager sessionManager.SessionManager
+	Error   error
+}
+
+func NewCSRFField(manager sessionManager.SessionManager) *CSRFField {
+	email := manager.GetUserEmail()
+	token := auth.NewTSToken(email, "csrf")
+	return &CSRFField{
+		Name:    "csrf",
+		Value:   token,
+		Email:   email,
+		Manager: manager,
+	}
+}
+
+func (f *CSRFField) SetData(d ...string) {
+	if len(d) > 0 {
+		f.Value = d[0]
+	} else {
+		f.Value = ""
+	}
+}
+
+func (f *CSRFField) GetData() []interface{} {
+	data := make([]interface{}, 1)
+	data[0] = f.Value
+	return data
+}
+
+func (f *CSRFField) GetName() string {
+	return f.Name
+}
+
+func (f *CSRFField) Render(args ...string) template.HTML {
+	str := fmt.Sprintf("<input type=\"hidden\" name=\"%v\" value=\"%v\">", f.Name, f.Value)
+	if f.Error != nil {
+		str += `<br /><span class="form-error">Sorry, this form expired. Please submit it again.</span>`
+	}
+	return template.HTML(str)
+}
+
+func (f *CSRFField) Validate() (bool, error) {
+	value, valid := auth.VerifyTSToken("csrf", f.Value, config.CSRFValidTime)
+	email := f.Manager.GetUserEmail()
+	if !valid || value != email {
+		f.Error = errors.New("Expired CSRF token")
+		return false, nil
+	}
+	return true, nil
 }

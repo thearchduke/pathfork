@@ -1,6 +1,7 @@
 package pathfork
 
 import (
+	"errors"
 	"net/http"
 
 	"path"
@@ -195,6 +196,8 @@ func HandleCrudEdit(r *http.Request, w http.ResponseWriter, database *db.DB, tr 
 				output.Obj = obj
 				return
 			}
+		} else {
+			output.Error = errors.New("Form error")
 		}
 	}
 	if err := tr.RenderPage(w, input.TemplateName, page); err != nil {

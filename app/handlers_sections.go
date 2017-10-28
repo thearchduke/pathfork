@@ -214,13 +214,18 @@ func (h SectionDeleteHandler) HandleRequest(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	section := response.Obj.(*models.Section)
-	form := forms.NewDeleteForm(section.Id)
+	form := forms.NewDeleteForm(section.Id, manager)
 	form.Populate(r)
-	if r.Method == "POST" && form.Validate() {
-		idToDelete, _ := strconv.Atoi(r.FormValue("object_id"))
-		success, err := models.DeleteSection(idToDelete, h.db)
-		if err != nil || !success {
-			glog.Error(err)
+	if r.Method == "POST" {
+		if form.Validate() {
+			idToDelete, _ := strconv.Atoi(r.FormValue("object_id"))
+			success, err := models.DeleteSection(idToDelete, h.db)
+			if err != nil || !success {
+				glog.Error(err)
+				http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("section_view"), section.Id), 301)
+				return
+			}
+		} else {
 			http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("section_view"), section.Id), 301)
 			return
 		}

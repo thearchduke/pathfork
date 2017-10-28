@@ -37,7 +37,7 @@ func GetSettingViewPage(sm sessionManager.SessionManager, verifiable interface{}
 
 func GetSettingEditPage(sm sessionManager.SessionManager, database *db.DB, verifiable interface{}) WebPage {
 	setting := verifiable.(*models.Setting)
-	form := forms.NewSettingForm()
+	form := forms.NewSettingForm(sm)
 	form.Fields["name"].SetData(setting.Name)
 	form.Fields["blurb"].SetData(setting.Blurb)
 	form.Fields["body"].SetData(setting.Body)
@@ -48,7 +48,7 @@ func GetSettingEditPage(sm sessionManager.SessionManager, database *db.DB, verif
 		Setting:    setting,
 		Universals: getUniversals(sm),
 		Form:       form,
-		DeleteForm: forms.NewDeleteForm(setting.Id),
+		DeleteForm: forms.NewDeleteForm(setting.Id, sm),
 	}
 }
 
@@ -66,7 +66,7 @@ func GetSettingIndexPage(sm sessionManager.SessionManager, settings []*models.Se
 }
 
 func GetSettingNewPage(sm sessionManager.SessionManager, database *db.DB, args ...string) WebPage {
-	form := forms.NewSettingForm()
+	form := forms.NewSettingForm(sm)
 	workId := args[0]
 	return WebPage{
 		Headline:   "So tell me about this place.",

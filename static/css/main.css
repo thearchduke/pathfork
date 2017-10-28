@@ -24,10 +24,9 @@ ol li.list-group-item {
   text-align: center;
 }
 
+
 a.panel-heading-link {
-	font-weight: bold;
 	color: white;
-	/*text-decoration: underline;*/
 }
 
 .nav-sidebar > li.active {
@@ -44,4 +43,8 @@ a.panel-heading-link {
 
 .view-body {
   padding: 10px;
+}
+
+.panel-primary > .panel-heading > h3 {
+  color: white;
 }
