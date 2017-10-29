@@ -74,10 +74,10 @@ func SendResetPasswordEmail(recipient string) error {
 }
 
 func SendContactFormEmail(emailFrom string, message string) error {
-	from := []string{"Pathfork user", emailFrom}
+	from := []string{"Pathfork user", "pathforkapp@gmail.com"}
 	to := []string{"Pathfork app", "pathforkapp@gmail.com"}
 	subject := "New contact form submission from Pathfork"
-	body := message
+	body := fmt.Sprintf("Message from %v: %v", emailFrom, message)
 	contactEmail := email{
 		From:    from,
 		To:      to,

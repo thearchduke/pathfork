@@ -37,6 +37,11 @@
           </p>
           <hr />
           {{ WrapTextAreaField .Form.Fields.blurb "5" "9" }} <br />
+          {{ if .NewObj }}
+          <p class="explanatory">
+            N.B.: The actual body of a work consists of the Sections you add to it, starting on the next screen.
+          </p>
+          {{ end }}
           <input type="submit" class="btn btn-default" value="Save">
         </div>
       </form>

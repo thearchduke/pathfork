@@ -211,6 +211,7 @@ func (h AuthHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 		}
 	} else if r.Method == "GET" && ok && action[0] == "logout" {
 		authenticator.LogUserOut()
+		query["next"] = []string{URLFor("home")}
 	} else if r.Method == "GET" && ok && action[0] == "verify" {
 		token, ok := query["token"]
 		if ok {
@@ -291,7 +292,6 @@ func (h ResetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				err := messages.SendResetPasswordEmail(emailInput)
-				glog.Info(auth.NewToken(r.FormValue("email"), "reset-password"))
 				msg := "OK, check your inbox for the reset email."
 				if err != nil {
 					msg = "Sorry, something went wrong with our email provider. Please try again later."
@@ -322,6 +322,7 @@ func (h ResetHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, URLFor("home"), 302)
 				return
 			}
+			return
 		} else if r.Method == "POST" {
 			form := page.Form
 			form.Populate(r)

@@ -18,20 +18,7 @@
         <li class="nav-home"><a href="{{ URLFor "home" }}">Home</a></li>
         <li class="nav-about"><a href="{{ URLFor "about" }}">About</a></li>
         <li class="nav-contact"><a href="{{ URLFor "contact" }}">Contact</a></li>
-        <li>
-        {{ if not .Universals.Session.Values.userEmail }}
-          <form class="navbar-form navbar-right nav-login-form" action="{{ URLFor "auth" }}?action=login" method="POST">
-            <div class="form-group">
-              <input name="email" type="text" placeholder="email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input name="password" type="password" placeholder="password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
-        </li>
-        <li class="nav-reset"><a href="{{ URLFor "reset" }}?action=request-reset">Reset password</a></li>
-        {{ else }}
+        {{ if .Universals.Session.Values.userEmail }}
             <li class="nav-logout"><a href="{{ URLFor "auth" }}?action=logout">Logout</a></li>
         {{ end }}
         <!--

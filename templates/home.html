@@ -5,7 +5,24 @@
       <h1>Pathfork</h1>
       <p>Welcome to Pathfork, a free (&amp; open-source) website to help you write your stories.</p>
         {{ if not .Universals.Session.Values.userEmail }}
-        <p>Sign up today!</p>
+      <p>If you already have an account, log in here:</p>
+        <div class="row">
+          <div class="col-md-10">
+            <form class="form-inline" action="{{ URLFor "auth" }}?action=login" method="POST">
+              <div class="form-group">
+                <input name="email" type="text" placeholder="email" class="form-control">
+              </div>
+              <div class="form-group">
+                <input name="password" type="password" placeholder="password" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-success">Sign in</button>
+            </form>
+          <br />
+          <p><small>(or <a href="{{ URLFor "reset" }}?action=request-reset">click here</a> to reset your password)</small></p>
+          </div>
+        </div>
+        <hr />
+        <p>Otherwise, sign up today!</p>
         <div class="row">
             <div class="col-md-4">
                 <form action="{{ URLFor "home" }}" method="POST">

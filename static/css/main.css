@@ -1,6 +1,7 @@
 /* Move down content because we have a fixed navbar that is 3.5rem tall */
 body {
   padding-top: 3.5rem;
+  font-size: 15px;
 }
 
 ol li.list-group-item {
@@ -10,6 +11,15 @@ ol li.list-group-item {
 
 .nav-sidebar {
  padding-top: 3.5rem;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+  color: white;
+}
+
+.navbar-inverse .navbar-nav>li>a:hover {
+  font-weight: bold;
+  transition: all .2s;
 }
 
 .column-title {
@@ -47,4 +57,21 @@ a.panel-heading-link {
 
 .panel-primary > .panel-heading > h3 {
   color: white;
+}
+
+.navbar-inverse .navbar-form input[type=text], .navbar-inverse .navbar-form input[type=password] {
+  color: #666;
+  padding-left: 5px;
+}
+
+[type=text].form-control, input.form-control {
+  padding-left: 5px;
+}
+
+.alert-info {
+  color: white;
+}
+
+.explanatory {
+  font-style: italic;
 }
