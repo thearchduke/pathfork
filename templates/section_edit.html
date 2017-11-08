@@ -26,7 +26,7 @@
       {{ if .NewObj }}
         <form action="{{ URLFor "section_new" }}?workId={{ .ParentId }}" method="POST">
       {{ else }}
-        <form action="{{ URLFor "section_edit" }}{{ .Section.Id }}" method="POST">
+        <form id="section-edit-form" action="{{ URLFor "section_edit" }}{{ .Section.Id }}" method="POST">
       {{ end }}
         <div class="form-group">
           {{ .Form.Fields.csrf.Render }}
@@ -58,4 +58,42 @@
 
 {{ define "scripts" }}
   {{ template "formscripts" . }}
+  <script type="text/javascript">
+    $(function() {
+      var autosaveInterval = 60 * 1000;
+      var previousFormString = $('#section-edit-form').serialize();
+
+      function getTimestamp() {
+        var now = new Date();
+        var hour = now.getHours();
+        var minsRaw = now.getMinutes();
+        var minsPadding;
+        minsRaw < 10 ? minsPadding = "0" : minsPadding = "";
+        mins = minsPadding + minsRaw;
+        return hour + ":" + mins;
+      }
+
+      function updateTimestamp() {
+        $('#autosave-timestamp').text(getTimestamp());
+      }
+
+      $('.body-label').append('<br/><small style="font-style: italic;">Autosaved at <span id="autosave-timestamp">' + getTimestamp() + '</span></small>');
+      setInterval(function() {
+        tinymce.triggerSave();
+        newFormString = $('#section-edit-form').serialize();
+        if (newFormString === previousFormString) {
+          updateTimestamp();
+          return;
+        }
+        previousFormString = newFormString;
+        $.ajax({
+          type: "POST",
+          url: '{{ URLFor "section_edit" }}{{ .Section.Id }}' + '?action=autosave',
+          data: newFormString,
+          success: updateTimestamp,
+        })
+      }, autosaveInterval);
+
+    });
+  </script>
 {{ end }}

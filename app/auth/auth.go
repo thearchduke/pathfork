@@ -25,15 +25,15 @@ func NewAuthenticator(r *http.Request, w http.ResponseWriter, s *sessions.Cookie
 	}
 }
 
-func IsLoggedIn(r *http.Request, s *sessions.CookieStore) bool {
+func IsLoggedIn(r *http.Request, s *sessions.CookieStore) (bool, string) {
 	session, err := s.Get(r, config.SessionCookieName)
 	if err != nil {
 		glog.Error(err)
 	}
 	if _, ok := session.Values["userEmail"]; ok {
-		return true
+		return true, session.Values["userEmail"].(string)
 	}
-	return false
+	return false, ""
 }
 
 func HashPassword(raw string) (string, error) {

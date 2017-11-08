@@ -15,6 +15,7 @@ import (
 	"bitbucket.org/jtyburke/pathfork/app/models"
 	"bitbucket.org/jtyburke/pathfork/app/pages"
 	"bitbucket.org/jtyburke/pathfork/app/sessionManager"
+	"bitbucket.org/jtyburke/pathfork/app/utils"
 )
 
 type pathforkFrontEndHandler struct {
@@ -190,14 +191,13 @@ func BuildContactHandler(tr *TemplateRenderer, db *db.DB, store *sessions.Cookie
 type AuthHandler pathforkFrontEndHandler
 
 func (h AuthHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
-	action, ok := query["action"]
+	action := utils.GetQueryArg(r, "action")
 	authenticator := auth.NewAuthenticator(r, w, h.sessionStore)
-	if r.Method == "POST" && ok && action[0] == "login" {
+	if r.Method == "POST" && action == "login" {
 		form := forms.NewSigninForm()
 		form.Populate(r)
 		if form.Validate() {
-			email := strings.ToLower(r.FormValue("email"))
+			email := strings.TrimSpace(strings.ToLower(r.FormValue("email")))
 			user := models.GetUserByEmail(email, h.db)
 			if user != nil && user.Verified {
 				pw := r.FormValue("password")
@@ -209,13 +209,14 @@ func (h AuthHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 				authenticator.Manager.AddFlash("Those credentials were incorrect.")
 			}
 		}
-	} else if r.Method == "GET" && ok && action[0] == "logout" {
+	} else if r.Method == "GET" && action == "logout" {
 		authenticator.LogUserOut()
-		query["next"] = []string{URLFor("home")}
-	} else if r.Method == "GET" && ok && action[0] == "verify" {
-		token, ok := query["token"]
-		if ok {
-			email, valid := auth.VerifyToken("verify-email", token[0])
+		http.Redirect(w, r, URLFor("home"), 302)
+		return
+	} else if r.Method == "GET" && action == "verify" {
+		token := utils.GetQueryArg(r, "token")
+		if token != "" {
+			email, valid := auth.VerifyToken("verify-email", token)
 			if valid {
 				user := models.GetUserByEmail(email, h.db)
 				tx, _ := h.db.DB.Begin()
@@ -224,17 +225,19 @@ func (h AuthHandler) HandleRequest(w http.ResponseWriter, r *http.Request) {
 					authenticator.Manager.AddFlash("Looks like there was a database error verifying your email. Ugh!")
 				} else {
 					tx.Commit()
-					authenticator.Manager.AddFlash("You're all set to go! Go ahead and log in above.")
+					authenticator.Manager.AddFlash("You're all set to go! Go ahead and log in below.")
+					http.Redirect(w, r, URLFor("home"), 302)
+					return
 				}
 			}
 		} else {
 			authenticator.Manager.AddFlash("Sorry, that verification link isn't valid.")
 		}
 	}
-	next, ok := query["next"]
+	next := utils.GetQueryArg(r, "next")
 	toForward := URLFor("dashboard")
-	if ok && len(next) > 1 {
-		toForward = next[0]
+	if next != "" {
+		toForward = next
 	}
 	http.Redirect(w, r, toForward, 302)
 }

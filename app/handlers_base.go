@@ -12,6 +12,7 @@ import (
 	"bitbucket.org/jtyburke/pathfork/app/models"
 	"bitbucket.org/jtyburke/pathfork/app/pages"
 	"bitbucket.org/jtyburke/pathfork/app/sessionManager"
+	"bitbucket.org/jtyburke/pathfork/app/utils"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
 )
@@ -41,9 +42,13 @@ func WrapFrontEndHandler(builder FrontEndHandlerBuilder, tr *TemplateRenderer, d
 		if !allowed {
 			glog.Warningf("Unallowed request method %v sent from %v to %v", r.Method, r.Referer(), r.URL)
 			http.Redirect(w, r, r.Referer(), 302)
+			return
 		}
 		_, public := publicRoutes[r.URL.Path]
-		isLoggedIn := auth.IsLoggedIn(r, store)
+		isLoggedIn, userName := auth.IsLoggedIn(r, store)
+		if userName != "" {
+			glog.Infof("User: %v", userName)
+		}
 		if !public && !isLoggedIn {
 			manager := sessionManager.New(r, w, store)
 			manager.AddFlash("Sorry, you're not allowed to access that.")
@@ -210,11 +215,9 @@ func HandleCrudEdit(r *http.Request, w http.ResponseWriter, database *db.DB, tr 
 }
 
 func getWorkId(r *http.Request) string {
-	query := r.URL.Query()
-	workId := "0"
-	workIdQ, ok := query["workId"]
-	if ok && len(workIdQ) > 0 {
-		workId = workIdQ[0]
+	queryId := utils.GetQueryArg(r, "workId")
+	if queryId == "" {
+		return "0"
 	}
-	return workId
+	return queryId
 }

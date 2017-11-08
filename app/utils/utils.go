@@ -1,6 +1,9 @@
 package utils
 
-import "strconv"
+import (
+	"net/http"
+	"strconv"
+)
 
 // Returns elements in 1 that are also in 2
 func StringSliceIntersection(slice1 []string, slice2 []string) []string {
@@ -46,4 +49,13 @@ func StringsToInts(strs []string) ([]int, error) {
 		ints[i] = x
 	}
 	return ints, nil
+}
+
+func GetQueryArg(r *http.Request, key string) string {
+	query := r.URL.Query()
+	val, ok := query[key]
+	if ok {
+		return val[0]
+	}
+	return ""
 }

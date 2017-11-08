@@ -53,7 +53,9 @@ func handleSectionForm(section *models.Section, r *http.Request, page pages.WebP
 	if r.FormValue("snippet") == "on" {
 		section.Snippet = true
 	}
-	section.UserEmail = manager.GetUserEmail()
+	if section.UserEmail == "" { // if new section
+		section.UserEmail = manager.GetUserEmail()
+	}
 }
 
 type SectionEditHandler pathforkFrontEndHandler
@@ -76,8 +78,12 @@ func (h SectionEditHandler) HandleRequest(w http.ResponseWriter, r *http.Request
 			tx, err := h.db.DB.Begin()
 			if err == nil {
 				if err := section.Save(tx); err != nil {
-					fmt.Printf("Error saving section on SectionEditHandler: %v", err.Error())
+					glog.Errorf("Error saving section on SectionEditHandler: %v", err.Error())
 					return nil, err
+				}
+				if action := utils.GetQueryArg(r, "action"); action == "autosave" {
+					tx.Commit()
+					return section, nil
 				}
 				if err := models.UpdateSectionsCharsRelations(
 					h.db, tx, section.Id, charsToInsert, charsToDelete,
@@ -112,6 +118,9 @@ func (h SectionEditHandler) HandleRequest(w http.ResponseWriter, r *http.Request
 		},
 	}
 	response := HandleCrudEdit(r, w, h.db, h.tr, manager, params)
+	if action := utils.GetQueryArg(r, "action"); action == "autosave" {
+		return
+	}
 	if r.Method == "POST" && response.Error == nil {
 		section := response.Obj.(*models.Section)
 		http.Redirect(w, r, URLFor("section_view")+fmt.Sprintf("%v", section.Id), http.StatusFound)

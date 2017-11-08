@@ -35,7 +35,7 @@ func (f *Form) Validate() (valid bool) {
 	valid = true
 	for i := range f.Fields {
 		if v, err := f.Fields[i].Validate(); !v {
-			glog.Info("Field error: %v", err)
+			glog.Infof("Field %v error: %v", f.Fields[i].GetName(), err)
 			valid = false
 		}
 	}
@@ -170,13 +170,13 @@ func basicTextAreaFieldRender(sf *StringField, args ...string) template.HTML {
 	}
 	if len(sf.data) > 0 {
 		str = fmt.Sprintf(
-			`<label>%v</label> <textarea rows="%v" cols="%v" class="form-control" name="%v" %v>%v</textarea>`,
-			sf.Label, args[0], args[1], sf.Name, required, sf.data[0],
+			`<label class="%v-label">%v</label> <textarea rows="%v" cols="%v" class="form-control" name="%v" %v>%v</textarea>`,
+			sf.Name, sf.Label, args[0], args[1], sf.Name, required, sf.data[0],
 		)
 	} else {
 		str = fmt.Sprintf(
-			`<label>%v</label> <textarea rows="%v" cols="%v" class="form-control" name="%v" %v></textarea>`,
-			sf.Label, args[0], args[1], sf.Name, required,
+			`<label class="%v-label">%v</label> <textarea rows="%v" cols="%v" class="form-control" name="%v" %v></textarea>`,
+			sf.Name, sf.Label, args[0], args[1], sf.Name, required,
 		)
 	}
 	if sf.Error != nil {
