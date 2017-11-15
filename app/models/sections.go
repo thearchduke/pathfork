@@ -12,8 +12,8 @@ import (
 	"github.com/golang/glog"
 )
 
-const sectionListColumnStr = "select tbl_section.section_id, tbl_section.title, tbl_section.blurb, tbl_section.user_email, tbl_section.work_id, tbl_section.section_order, tbl_section.is_snippet from tbl_section"
-const sectionDetailColumnStr = "select tbl_section.section_id, tbl_section.title, tbl_section.blurb, tbl_section.body, user_email, tbl_section.work_id, tbl_section.section_order, tbl_section.is_snippet from tbl_section"
+const sectionListColumnStr = "select tbl_section.section_id, tbl_section.title, tbl_section.blurb, tbl_section.user_email, tbl_section.work_id, tbl_section.section_order, tbl_section.is_snippet, tbl_section.word_count from tbl_section"
+const sectionDetailColumnStr = "select tbl_section.section_id, tbl_section.title, tbl_section.blurb, tbl_section.body, user_email, tbl_section.work_id, tbl_section.section_order, tbl_section.is_snippet, tbl_section.word_count from tbl_section"
 
 type Section struct {
 	Title     string
@@ -25,6 +25,7 @@ type Section struct {
 	WorkId    int
 	Order     int64
 	Snippet   bool
+	WordCount int
 }
 
 func NewSection(title, blurb, body, workId, email string) *Section {
@@ -35,6 +36,7 @@ func NewSection(title, blurb, body, workId, email string) *Section {
 		Body:      body,
 		WorkId:    i,
 		UserEmail: email,
+		WordCount: 0,
 	}
 }
 
@@ -44,24 +46,24 @@ func (s *Section) VerifyPermission(sm sessionManager.SessionManager) bool {
 
 func (s *Section) GetInsertStr() string {
 	return `
-INSERT INTO tbl_section(title, blurb, body, work_id, section_order, user_email, is_snippet)
-VALUES ($1, $2, $3, $4, $5, $6, $7) returning section_id;`
+INSERT INTO tbl_section(title, blurb, body, work_id, section_order, user_email, is_snippet, word_count)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8) returning section_id;`
 }
 
 func (s *Section) GetInsertArgs() []interface{} {
-	return []interface{}{s.Title, db.ToNullString(s.Blurb), db.ToNullString(s.Body), s.WorkId, db.ToNullInt(s.Order), s.UserEmail, s.Snippet}
+	return []interface{}{s.Title, db.ToNullString(s.Blurb), db.ToNullString(s.Body), s.WorkId, db.ToNullInt(s.Order), s.UserEmail, s.Snippet, s.WordCount}
 }
 
 func (s *Section) GetUpdateStr() string {
 	return `
 UPDATE tbl_section
-SET title=$1, blurb=$2, body=$3, section_order=$4, is_snippet=$5
-WHERE section_id=$6
+SET title=$1, blurb=$2, body=$3, section_order=$4, is_snippet=$5, word_count=$6
+WHERE section_id=$7
 `
 }
 
 func (s *Section) GetUpdateArgs() []interface{} {
-	return []interface{}{s.Title, s.Blurb, s.Body, s.Order, s.Snippet, s.Id}
+	return []interface{}{s.Title, s.Blurb, s.Body, s.Order, s.Snippet, s.WordCount, s.Id}
 }
 
 func (s *Section) Save(tx *sql.Tx) error {
@@ -101,7 +103,7 @@ func sectionListFromRow(db *db.DB, r *sql.Rows) (db.Insertable, error) {
 	section := Section{DB: db}
 	nullBlurb := sql.NullString{}
 	nullOrder := sql.NullInt64{}
-	if err := r.Scan(&section.Id, &section.Title, &nullBlurb, &section.UserEmail, &section.WorkId, &nullOrder, &section.Snippet); err != nil {
+	if err := r.Scan(&section.Id, &section.Title, &nullBlurb, &section.UserEmail, &section.WorkId, &nullOrder, &section.Snippet, &section.WordCount); err != nil {
 		glog.Error(err.Error())
 		return nil, err
 	}
@@ -115,7 +117,7 @@ func sectionDetailFromRow(db *db.DB, r *sql.Rows) (db.Insertable, error) {
 	nullBlurb := sql.NullString{}
 	nullBody := sql.NullString{}
 	nullOrder := sql.NullInt64{}
-	if err := r.Scan(&section.Id, &section.Title, &nullBlurb, &nullBody, &section.UserEmail, &section.WorkId, &nullOrder, &section.Snippet); err != nil {
+	if err := r.Scan(&section.Id, &section.Title, &nullBlurb, &nullBody, &section.UserEmail, &section.WorkId, &nullOrder, &section.Snippet, &section.WordCount); err != nil {
 		glog.Error(err.Error())
 		return nil, err
 	}
@@ -126,7 +128,7 @@ func sectionDetailFromRow(db *db.DB, r *sql.Rows) (db.Insertable, error) {
 }
 
 func GetSectionsForWork(workId int, db *db.DB) ([]*Section, []*Section) {
-	query := sectionsForListQuery{Id: workId}
+	query := sectionsForWorkQuery{Id: workId}
 	sectionInt, err := db.Query(query)
 	if err != nil {
 		fmt.Printf("Error on GetSectionsForWork: %v", err.Error())
@@ -151,24 +153,24 @@ func GetSectionsForWork(workId int, db *db.DB) ([]*Section, []*Section) {
 	return sections, snippets
 }
 
-type sectionsForListQuery struct {
+type sectionsForWorkQuery struct {
 	Id int
 }
 
-func (q sectionsForListQuery) GetQueryStr() string {
+func (q sectionsForWorkQuery) GetQueryStr() string {
 	return `
-select section_id, title, blurb, section_order, is_snippet from tbl_section where work_id=$1`
+select section_id, title, blurb, section_order, is_snippet, word_count from tbl_section where work_id=$1`
 }
 
-func (q sectionsForListQuery) GetQueryArgs() []interface{} {
+func (q sectionsForWorkQuery) GetQueryArgs() []interface{} {
 	return []interface{}{q.Id}
 }
 
-func (q sectionsForListQuery) ObjFromRow(db *db.DB, r *sql.Rows) (db.Insertable, error) {
+func (q sectionsForWorkQuery) ObjFromRow(db *db.DB, r *sql.Rows) (db.Insertable, error) {
 	section := Section{DB: db}
 	nullBlurb := sql.NullString{}
 	nullOrder := sql.NullInt64{}
-	if err := r.Scan(&section.Id, &section.Title, &nullBlurb, &nullOrder, &section.Snippet); err != nil {
+	if err := r.Scan(&section.Id, &section.Title, &nullBlurb, &nullOrder, &section.Snippet, &section.WordCount); err != nil {
 		glog.Error(err.Error())
 		return nil, err
 	}

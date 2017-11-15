@@ -9,13 +9,14 @@ import (
 	"github.com/golang/glog"
 )
 
-var workListColumnStr = "select tbl_work.work_id, tbl_work.title, tbl_work.blurb, tbl_work.user_email from tbl_work"
+var workListColumnStr = "select tbl_work.work_id, tbl_work.title, tbl_work.blurb, tbl_work.user_email, tbl_work.word_count from tbl_work"
 
 type Work struct {
 	Title     string
 	Blurb     string
 	DB        *db.DB
 	UserEmail string
+	WordCount int
 	Id        int
 }
 
@@ -93,7 +94,7 @@ func (q workByIdQuery) ObjFromRow(db *db.DB, r *sql.Rows) (db.Insertable, error)
 func workFromRow(db *db.DB, r *sql.Rows) (db.Insertable, error) {
 	work := Work{DB: db}
 	nullBlurb := sql.NullString{}
-	if err := r.Scan(&work.Id, &work.Title, &nullBlurb, &work.UserEmail); err != nil {
+	if err := r.Scan(&work.Id, &work.Title, &nullBlurb, &work.UserEmail, &work.WordCount); err != nil {
 		return nil, err
 	}
 	work.Blurb = nullBlurb.String
@@ -169,4 +170,29 @@ func GetWorksForSetting(settingId int, database *db.DB) []*Work {
 
 func DeleteWork(workId int, database *db.DB) (bool, error) {
 	return db.DoBasicDelete(workId, "work", database)
+}
+
+type workWordCountUpdate struct {
+	Id        int
+	WordCount int
+}
+
+func (u workWordCountUpdate) GetUpdateStr() string {
+	return `
+UPDATE tbl_work
+SET word_count = word_count + $1
+WHERE work_id=$2
+`
+}
+
+func (u workWordCountUpdate) GetUpdateArgs() []interface{} {
+	return []interface{}{u.WordCount, u.Id}
+}
+
+func UpdateWorkWordCount(database *db.DB, tx *sql.Tx, id, wordCount int) error {
+	update := workWordCountUpdate{
+		Id:        id,
+		WordCount: wordCount,
+	}
+	return database.Update(update, tx)
 }

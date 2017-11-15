@@ -27,6 +27,7 @@ work_id serial primary key,
 title text not null,
 blurb text,
 user_email text not null,
+word_count integer not null default 0,
 foreign key (user_email) references tbl_user(email)
 	ON DELETE CASCADE
 );
@@ -40,6 +41,7 @@ order integer,
 is_snippet boolean default false,
 work_id integer not null,
 user_email text not null,
+word_count integer not null default 0,
 foreign key (work_id) references tbl_work(work_id)
 	ON DELETE CASCADE,
 foreign key (user_email) references tbl_user(email)

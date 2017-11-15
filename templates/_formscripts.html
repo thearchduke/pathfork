@@ -6,7 +6,12 @@
         $(".chosen-select").chosen();        
         tinymce.init({
             selector:'textarea',
-            entity_encoding : "raw"
+            entity_encoding : "raw",
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save();
+                });
+            },
         });
     });
 </script>

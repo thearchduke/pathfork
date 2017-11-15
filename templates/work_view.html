@@ -3,11 +3,12 @@
 {{ define "jumbotron" }}
     <div class="jumbotron">
       <h1>{{ .Work.Title }}</h1>
+      <p><a href="{{ URLFor "work_edit" }}{{ .Work.Id }}"><span class="glyphicon glyphicon-pencil"></span>&nbsp;edit</a>
+      &nbsp;&nbsp;|&nbsp;&nbsp;<a href="{{ URLFor "work_export" }}{{ .Work.Id }}" data-toggle="tooltip" title="Takes you to a plain HTML page. Save this and open it in Word or another editor, then save as... with your preferred format."><span class="glyphicon glyphicon-save-file"></span>&nbsp;export</a></p>
       <p>
           {{ AsHTML .Work.Blurb }}
       </p>
-      <p><a href="{{ URLFor "work_edit" }}{{ .Work.Id }}"><span class="glyphicon glyphicon-pencil"></span>&nbsp;edit</a></p>
-      <p><a href="{{ URLFor "work_export" }}{{ .Work.Id }}" data-toggle="tooltip" title="Takes you to a plain HTML page. Save this and open it in Word or another editor, then save as... with your preferred format."><span class="glyphicon glyphicon-save-file"></span>&nbsp;export</a></p>
+      <small class="word-count" style="font-style: italic;">({{ .Work.WordCount }} words)</small>
     </div>
 {{ end }}
 
@@ -22,7 +23,7 @@
           <ol class="list-group">
               {{ range .SectionsList }}
               <li class="list-group-item">
-                  <a href="{{ URLFor "section_view" }}{{ .Id }}"><span class="glyphicon glyphicon-zoom-in"></span>&nbsp;{{ .Title }}</a>
+                  <a href="{{ URLFor "section_view" }}{{ .Id }}"><span class="glyphicon glyphicon-zoom-in"></span>&nbsp;{{ .Title }}</a> <small class="word-count" style="font-style: italic;">({{ .WordCount }} words)</small>
                   <p>
                       {{ AsHTML .Blurb }}
                   </p>

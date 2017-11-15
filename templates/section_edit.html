@@ -30,6 +30,8 @@
       {{ end }}
         <div class="form-group">
           {{ .Form.Fields.csrf.Render }}
+          {{ .Form.Fields.wordCount.Render }}
+          {{ .Form.Fields.oldWordCount.Render }}
           {{ .Form.Fields.work_id.Render }}
           {{ .Form.Fields.currentCharIds.Render }}
           {{ .Form.Fields.currentSettingIds.Render }}
@@ -60,6 +62,29 @@
   {{ template "formscripts" . }}
   <script type="text/javascript">
     $(function() {
+      ////// word counting
+      function updateWordCount() {
+        var wordCount = tinyMCE.get('body').getContent().split(' ').length;
+        wordCount === 1 ? wordCount = 0 : null;
+        $('#wordCountDisplay').text(wordCount);
+        $('input[name=wordCount]').val(wordCount);
+      }
+
+      setTimeout(function() {
+        updateWordCount();
+        tinyMCE.get('body').on('keyup', updateWordCount);        
+      }, 2000);
+      // ^^   tinyMCE takes a second to load; probably a better way to do this
+      // e.g. putting it in the tinyMCE setup field
+
+      $('.body-label').append('<br/><span id="wordCountDisplay"></span> words');
+      var initWordCount = $('textarea[name=body]').text().split(' ').length;
+      initWordCount === 1 ? initWordCount = 0 : null;
+      $('input[name=wordCount]').val(initWordCount);
+      $('input[name=oldWordCount]').val(initWordCount);
+      $('#wordCountDisplay').text(initWordCount);
+
+      ////// autosave
       var autosaveInterval = 60 * 1000;
       var previousFormString = $('#section-edit-form').serialize();
 

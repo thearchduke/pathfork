@@ -98,6 +98,8 @@ func NewSectionForm(characterOptions []map[string]string, settingOptions []map[s
 			"currentCharIds":    &HiddenField{Name: "currentCharIds", Value: currentCharIds},
 			"currentSettingIds": &HiddenField{Name: "currentSettingIds", Value: currentSettingIds},
 			"csrf":              NewCSRFField(manager),
+			"wordCount":         &HiddenField{Name: "wordCount", Value: "0"},
+			"oldWordCount":      &HiddenField{Name: "oldWordCount", Value: "0"},
 		},
 	)
 }

@@ -49,6 +49,7 @@ func handleSectionForm(section *models.Section, r *http.Request, page pages.WebP
 	section.Title = r.FormValue("title")
 	section.Blurb = r.FormValue("blurb")
 	section.Body = r.FormValue("body")
+	section.WordCount, _ = strconv.Atoi(r.FormValue("wordCount"))
 	section.Snippet = false
 	if r.FormValue("snippet") == "on" {
 		section.Snippet = true
@@ -110,6 +111,14 @@ func (h SectionEditHandler) HandleRequest(w http.ResponseWriter, r *http.Request
 				); err != nil {
 					glog.Errorf("Problem saving section relations: %v", err.Error())
 					return nil, err
+				}
+				if r.FormValue("wordCount") != r.FormValue("oldWordCount") {
+					wordCount, _ := strconv.Atoi(r.FormValue("wordCount"))
+					oldWordCount, _ := strconv.Atoi(r.FormValue("oldWordCount"))
+					diff := wordCount - oldWordCount
+					if err := models.UpdateWorkWordCount(h.db, tx, section.WorkId, diff); err != nil {
+						return nil, err
+					}
 				}
 				tx.Commit()
 				return section, nil
@@ -185,6 +194,12 @@ func (h SectionNewHandler) HandleRequest(w http.ResponseWriter, r *http.Request)
 			settingIdsToInsert, _ := utils.StringsToInts(r.Form["settings"])
 			err = models.UpdateSectionsSettingsRelations(h.db, tx, id, settingIdsToInsert, []int{})
 			err = models.UpdateWorksSettingsNoConflict(h.db, tx, newSection.WorkId, settingIdsToInsert)
+			if r.FormValue("wordCount") != r.FormValue("oldWordCount") {
+				wordCount, _ := strconv.Atoi(r.FormValue("wordCount"))
+				oldWordCount, _ := strconv.Atoi(r.FormValue("oldWordCount"))
+				diff := wordCount - oldWordCount
+				err = models.UpdateWorkWordCount(h.db, tx, newSection.WorkId, diff)
+			}
 			tx.Commit()
 			return newSection, err
 		},
@@ -229,11 +244,15 @@ func (h SectionDeleteHandler) HandleRequest(w http.ResponseWriter, r *http.Reque
 		if form.Validate() {
 			idToDelete, _ := strconv.Atoi(r.FormValue("object_id"))
 			success, err := models.DeleteSection(idToDelete, h.db)
+			tx, _ := h.db.DB.Begin()
+			err = models.UpdateWorkWordCount(h.db, tx, section.WorkId, -section.WordCount)
 			if err != nil || !success {
+				tx.Rollback()
 				glog.Error(err)
 				http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("section_view"), section.Id), 301)
 				return
 			}
+			tx.Commit()
 		} else {
 			http.Redirect(w, r, fmt.Sprintf("%v%v", URLFor("section_view"), section.Id), 301)
 			return
